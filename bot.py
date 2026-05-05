@@ -26,6 +26,7 @@ COGS = [
     "cogs.social",
     "cogs.leaderboards",
     "cogs.scheduler",
+    "cogs.help",
 ]
 
 class Tenacia(commands.Bot):
