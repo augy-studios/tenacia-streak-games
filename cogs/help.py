@@ -164,7 +164,7 @@ class Help(commands.Cog):
             pages.append(embed)
 
         view = HelpView(pages, interaction.user.id)
-        await interaction.response.send_message(embed=pages[0], view=view, ephemeral=True)
+        await interaction.response.send_message(embed=pages[0], view=view)
         view.message = await interaction.original_response()
 
 
