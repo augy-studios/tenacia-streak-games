@@ -31,7 +31,7 @@ class LongGame(commands.Cog):
 
     @round_cmd.command(name="open", description="Open a new creative round.")
     @app_commands.describe(name="Name or theme for this round")
-    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.checks.has_permissions(manage_channels=True)
     async def round_open(self, interaction: discord.Interaction, name: str):
         gid = interaction.guild_id
         now = now_ts()
@@ -65,7 +65,7 @@ class LongGame(commands.Cog):
             await interaction.response.send_message("✅", ephemeral=True, delete_after=1)
 
     @round_cmd.command(name="close", description="Close the current creative round and tally results.")
-    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.checks.has_permissions(manage_channels=True)
     async def round_close(self, interaction: discord.Interaction):
         gid = interaction.guild_id
         now = now_ts()

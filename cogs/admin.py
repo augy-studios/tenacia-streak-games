@@ -1,6 +1,6 @@
 """
 Admin cog — manage game toggles and channel assignments per guild.
-Requires Manage Guild permission.
+Requires Manage Channels permission.
 """
 import discord
 from discord import app_commands
@@ -19,9 +19,9 @@ from utils.embeds import (
 
 def admin_only():
     async def predicate(interaction: discord.Interaction) -> bool:
-        if not interaction.user.guild_permissions.manage_guild:
+        if not interaction.user.guild_permissions.manage_channels:
             await interaction.response.send_message(
-                embed=danger_embed("No Permission", "You need **Manage Server** permission."),
+                embed=danger_embed("No Permission", "You need **Manage Channels** permission."),
                 ephemeral=True,
             )
             return False
