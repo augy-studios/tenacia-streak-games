@@ -1,4 +1,4 @@
-# Tenacia 🔥
+# <img src="/TSG-main.png" height="30" alt="icon"> Tenacia
 
 A public Discord bot for consistency, dedication, and creative community games. Every feature can be independently enabled or disabled per server, with optional dedicated channels per game.
 
