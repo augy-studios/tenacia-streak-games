@@ -56,7 +56,7 @@ class Habits(commands.Cog):
     prompt = app_commands.Group(name="prompt", description="Daily Prompt Responder commands.")
 
     @prompt.command(name="post", description="Post today's daily prompt (admin or auto-scheduled).")
-    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.checks.has_permissions(manage_channels=True)
     async def prompt_post(self, interaction: discord.Interaction):
         gid = interaction.guild_id
         if not await is_enabled(gid, "daily_prompt"):

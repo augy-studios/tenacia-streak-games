@@ -115,7 +115,7 @@ class Scheduler(commands.Cog):
         delay_minutes="When to run the first time from now (minutes, default 0)",
     )
     @app_commands.choices(task=[app_commands.Choice(name=t, value=t) for t in TASK_TYPES])
-    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.checks.has_permissions(manage_channels=True)
     async def schedule_add(
         self,
         interaction: discord.Interaction,
@@ -154,7 +154,7 @@ class Scheduler(commands.Cog):
     @schedule.command(name="remove", description="Remove a scheduled task.")
     @app_commands.describe(task="Which task to remove")
     @app_commands.choices(task=[app_commands.Choice(name=t, value=t) for t in TASK_TYPES])
-    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.checks.has_permissions(manage_channels=True)
     async def schedule_remove(self, interaction: discord.Interaction, task: app_commands.Choice[str]):
         gid = interaction.guild_id
         async with get_db() as db:
@@ -171,7 +171,7 @@ class Scheduler(commands.Cog):
         )
 
     @schedule.command(name="list", description="View all scheduled tasks for this server.")
-    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.checks.has_permissions(manage_channels=True)
     async def schedule_list(self, interaction: discord.Interaction):
         gid = interaction.guild_id
         async with get_db() as db:
