@@ -40,7 +40,7 @@ class Streaks(commands.Cog):
             return await interaction.response.send_message(embed=not_enabled_embed("Rolling Streak"), ephemeral=True)
 
         now = now_ts()
-        async with await get_db() as db:
+        async with get_db() as db:
             row = await db.execute_fetchall(
                 "SELECT * FROM rolling_streak WHERE guild_id=? AND user_id=?", (gid, uid)
             )
@@ -105,7 +105,7 @@ class Streaks(commands.Cog):
         if not await is_enabled(gid, "rolling_streak"):
             return await interaction.response.send_message(embed=not_enabled_embed("Rolling Streak"), ephemeral=True)
         target = member or interaction.user
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM rolling_streak WHERE guild_id=? AND user_id=?", (gid, target.id)
             )
@@ -131,7 +131,7 @@ class Streaks(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "rolling_streak"):
             return await interaction.response.send_message(embed=not_enabled_embed("Rolling Streak"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, current_streak, best_streak FROM rolling_streak WHERE guild_id=? ORDER BY current_streak DESC LIMIT 10",
                 (gid,)
@@ -151,7 +151,7 @@ class Streaks(commands.Cog):
     # ────────────────────────────────────────────────────────────────
 
     async def _momentum_post(self, guild_id: int, user_id: int, ts: float):
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM momentum_board WHERE guild_id=? AND user_id=?", (guild_id, user_id)
             )
@@ -187,7 +187,7 @@ class Streaks(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "momentum_board"):
             return await interaction.response.send_message(embed=not_enabled_embed("Momentum Board"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, current_streak, best_streak FROM momentum_board WHERE guild_id=? ORDER BY current_streak DESC LIMIT 10",
                 (gid,)
@@ -207,7 +207,7 @@ class Streaks(commands.Cog):
 
     async def record_persistence_post(self, guild_id: int, user_id: int, ts: float):
         """Called from on_message; updates rolling 7-day window post log."""
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT post_timestamps, qualifying_weeks FROM persistence_cup WHERE guild_id=? AND user_id=?",
                 (guild_id, user_id)
@@ -262,7 +262,7 @@ class Streaks(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "persistence_cup"):
             return await interaction.response.send_message(embed=not_enabled_embed("Persistence Cup"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 """SELECT user_id, post_timestamps FROM persistence_cup WHERE guild_id=?""", (gid,)
             )
@@ -293,7 +293,7 @@ class Streaks(commands.Cog):
 
     async def _faithful_post(self, guild_id: int, user_id: int, ts: float):
         month_key = ts_to_dt(ts).strftime("%Y-%m")
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT months_active, active_months FROM the_faithful WHERE guild_id=? AND user_id=?",
                 (guild_id, user_id)
@@ -322,7 +322,7 @@ class Streaks(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "the_faithful"):
             return await interaction.response.send_message(embed=not_enabled_embed("The Faithful"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, months_active FROM the_faithful WHERE guild_id=? ORDER BY months_active DESC LIMIT 10",
                 (gid,)

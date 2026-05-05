@@ -35,7 +35,7 @@ class Leaderboards(commands.Cog):
         cutoff = now - WEEK_SECS
         scores: dict[int, int] = {}
 
-        async with await get_db() as db:
+        async with get_db() as db:
             # Prompt responses this week
             rows = await db.execute_fetchall(
                 """SELECT pr.user_id, COUNT(*) as c FROM prompt_responses pr
@@ -101,7 +101,7 @@ class Leaderboards(commands.Cog):
         cutoff = now - MONTH_SECS
         scores: dict[int, int] = {}
 
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 """SELECT pr.user_id, COUNT(*) as c FROM prompt_responses pr
                    JOIN daily_prompts dp ON pr.prompt_id=dp.id
@@ -148,7 +148,7 @@ class Leaderboards(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "alltime_board"):
             return await interaction.response.send_message(embed=not_enabled_embed("All-Time Legacy Board"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, total_points, wins, submissions FROM legacy_points WHERE guild_id=? ORDER BY total_points DESC LIMIT 10",
                 (gid,)
@@ -171,7 +171,7 @@ class Leaderboards(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "streak_board"):
             return await interaction.response.send_message(embed=not_enabled_embed("Streak Board"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, current_streak, best_streak FROM rolling_streak WHERE guild_id=? ORDER BY current_streak DESC LIMIT 10",
                 (gid,)
@@ -194,7 +194,7 @@ class Leaderboards(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "voter_board"):
             return await interaction.response.send_message(embed=not_enabled_embed("Voter Board"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, total_votes FROM hype_keeper WHERE guild_id=? ORDER BY total_votes DESC LIMIT 10",
                 (gid,)
@@ -217,7 +217,7 @@ class Leaderboards(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "underdog_board"):
             return await interaction.response.send_message(embed=not_enabled_embed("Underdog Board"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             all_rows = await db.execute_fetchall(
                 "SELECT user_id, total_points, wins FROM legacy_points WHERE guild_id=? ORDER BY total_points ASC",
                 (gid,)

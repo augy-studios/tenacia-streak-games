@@ -32,7 +32,7 @@ class Scheduler(commands.Cog):
     @tasks.loop(seconds=60)
     async def tick(self):
         now = now_ts()
-        async with await get_db() as db:
+        async with get_db() as db:
             due = await db.execute_fetchall(
                 "SELECT * FROM scheduled_tasks WHERE next_run <= ?", (now,)
             )
@@ -74,7 +74,7 @@ class Scheduler(commands.Cog):
 
             from cogs.habits import fetch_prompt
             prompt_text = await fetch_prompt()
-            async with await get_db() as db:
+            async with get_db() as db:
                 cursor = await db.execute(
                     "INSERT INTO daily_prompts (guild_id, prompt_text, posted_at) VALUES (?,?,?)",
                     (gid, prompt_text, now)
@@ -89,12 +89,12 @@ class Scheduler(commands.Cog):
                 f"*Prompt ID: `{prompt_id}`*",
             )
             msg = await channel.send(embed=embed)
-            async with await get_db() as db:
+            async with get_db() as db:
                 await db.execute("UPDATE daily_prompts SET message_id=? WHERE id=?", (msg.id, prompt_id))
                 await db.commit()
 
         # Reschedule task
-        async with await get_db() as db:
+        async with get_db() as db:
             await db.execute(
                 "UPDATE scheduled_tasks SET next_run=? WHERE id=?",
                 (now + interval, task["id"])
@@ -128,7 +128,7 @@ class Scheduler(commands.Cog):
         next_run = now + delay_minutes * 60
         interval_secs = interval_hours * 3600
 
-        async with await get_db() as db:
+        async with get_db() as db:
             existing = await db.execute_fetchall(
                 "SELECT id FROM scheduled_tasks WHERE guild_id=? AND task_type=?", (gid, task.value)
             )
@@ -157,7 +157,7 @@ class Scheduler(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def schedule_remove(self, interaction: discord.Interaction, task: app_commands.Choice[str]):
         gid = interaction.guild_id
-        async with await get_db() as db:
+        async with get_db() as db:
             result = await db.execute(
                 "DELETE FROM scheduled_tasks WHERE guild_id=? AND task_type=?", (gid, task.value)
             )
@@ -174,7 +174,7 @@ class Scheduler(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def schedule_list(self, interaction: discord.Interaction):
         gid = interaction.guild_id
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM scheduled_tasks WHERE guild_id=?", (gid,)
             )

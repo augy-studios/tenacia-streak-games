@@ -1,15 +1,20 @@
 import aiosqlite
 import os
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 DB_PATH = os.getenv("DB_PATH", "data/tenacia.db")
 
-async def get_db() -> aiosqlite.Connection:
+@asynccontextmanager
+async def get_db():
     db = await aiosqlite.connect(DB_PATH)
     db.row_factory = aiosqlite.Row
     await db.execute("PRAGMA journal_mode=WAL")
     await db.execute("PRAGMA foreign_keys=ON")
-    return db
+    try:
+        yield db
+    finally:
+        await db.close()
 
 async def init_db():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)

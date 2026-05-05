@@ -35,7 +35,7 @@ class LongGame(commands.Cog):
     async def round_open(self, interaction: discord.Interaction, name: str):
         gid = interaction.guild_id
         now = now_ts()
-        async with await get_db() as db:
+        async with get_db() as db:
             open_rounds = await db.execute_fetchall(
                 "SELECT id FROM creative_rounds WHERE guild_id=? AND is_open=1", (gid,)
             )
@@ -69,7 +69,7 @@ class LongGame(commands.Cog):
     async def round_close(self, interaction: discord.Interaction):
         gid = interaction.guild_id
         now = now_ts()
-        async with await get_db() as db:
+        async with get_db() as db:
             open_rounds = await db.execute_fetchall(
                 "SELECT * FROM creative_rounds WHERE guild_id=? AND is_open=1", (gid,)
             )
@@ -150,7 +150,7 @@ class LongGame(commands.Cog):
             await interaction.response.send_message("✅", ephemeral=True, delete_after=1)
 
     async def _get_vote(self, gid, round_id, voter_id):
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT voted_for_id FROM round_votes WHERE guild_id=? AND round_id=? AND voter_id=?",
                 (gid, round_id, voter_id)
@@ -162,7 +162,7 @@ class LongGame(commands.Cog):
     async def round_submit(self, interaction: discord.Interaction, content: str):
         gid, uid = interaction.guild_id, interaction.user.id
         now = now_ts()
-        async with await get_db() as db:
+        async with get_db() as db:
             open_rounds = await db.execute_fetchall(
                 "SELECT id FROM creative_rounds WHERE guild_id=? AND is_open=1", (gid,)
             )
@@ -230,7 +230,7 @@ class LongGame(commands.Cog):
                 embed=danger_embed("Invalid Vote", "You can't vote for yourself."), ephemeral=True
             )
         now = now_ts()
-        async with await get_db() as db:
+        async with get_db() as db:
             open_rounds = await db.execute_fetchall(
                 "SELECT id FROM creative_rounds WHERE guild_id=? AND is_open=1", (gid,)
             )
@@ -275,14 +275,14 @@ class LongGame(commands.Cog):
     @round_cmd.command(name="status", description="View the current round status.")
     async def round_status(self, interaction: discord.Interaction):
         gid = interaction.guild_id
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM creative_rounds WHERE guild_id=? AND is_open=1", (gid,)
             )
         if not rows:
             return await interaction.response.send_message(embed=warning_embed("No Open Round", "No round is currently open."), ephemeral=True)
         r = rows[0]
-        async with await get_db() as db:
+        async with get_db() as db:
             subs = await db.execute_fetchall(
                 "SELECT user_id FROM round_submissions WHERE guild_id=? AND round_id=?", (gid, r["id"])
             )
@@ -344,7 +344,7 @@ class LongGame(commands.Cog):
         if not await is_enabled(gid, "legacy_points"):
             return await interaction.response.send_message(embed=not_enabled_embed("Legacy Points"), ephemeral=True)
         target = member or interaction.user
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM legacy_points WHERE guild_id=? AND user_id=?", (gid, target.id)
             )
@@ -366,7 +366,7 @@ class LongGame(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "legacy_points"):
             return await interaction.response.send_message(embed=not_enabled_embed("Legacy Points"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, total_points, wins FROM legacy_points WHERE guild_id=? ORDER BY total_points DESC LIMIT 10",
                 (gid,)
@@ -391,7 +391,7 @@ class LongGame(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "comeback_counter"):
             return await interaction.response.send_message(embed=not_enabled_embed("Comeback Counter"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, comebacks FROM comeback_counter WHERE guild_id=? ORDER BY comebacks DESC LIMIT 10",
                 (gid,)
@@ -416,7 +416,7 @@ class LongGame(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "underdog_rising"):
             return await interaction.response.send_message(embed=not_enabled_embed("Underdog Rising"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             all_rows = await db.execute_fetchall(
                 "SELECT user_id, total_points, wins FROM legacy_points WHERE guild_id=? ORDER BY total_points ASC",
                 (gid,)
@@ -443,7 +443,7 @@ class LongGame(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "the_grind"):
             return await interaction.response.send_message(embed=not_enabled_embed("The Grind"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, submissions FROM legacy_points WHERE guild_id=? ORDER BY submissions DESC LIMIT 10",
                 (gid,)
