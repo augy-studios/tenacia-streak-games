@@ -60,7 +60,7 @@ GAME_DISPLAY = {
 
 
 async def is_enabled(guild_id: int, game_key: str) -> bool:
-    async with await get_db() as db:
+    async with get_db() as db:
         row = await db.execute_fetchall(
             "SELECT enabled FROM guild_settings WHERE guild_id=? AND game_key=?",
             (guild_id, game_key)
@@ -71,7 +71,7 @@ async def is_enabled(guild_id: int, game_key: str) -> bool:
 
 
 async def set_enabled(guild_id: int, game_key: str, enabled: bool):
-    async with await get_db() as db:
+    async with get_db() as db:
         await db.execute("""
             INSERT INTO guild_settings (guild_id, game_key, enabled)
             VALUES (?, ?, ?)
@@ -81,7 +81,7 @@ async def set_enabled(guild_id: int, game_key: str, enabled: bool):
 
 
 async def get_channel(guild_id: int, game_key: str) -> int | None:
-    async with await get_db() as db:
+    async with get_db() as db:
         rows = await db.execute_fetchall(
             "SELECT channel_id FROM guild_settings WHERE guild_id=? AND game_key=?",
             (guild_id, game_key)
@@ -92,7 +92,7 @@ async def get_channel(guild_id: int, game_key: str) -> int | None:
 
 
 async def set_channel(guild_id: int, game_key: str, channel_id: int | None):
-    async with await get_db() as db:
+    async with get_db() as db:
         await db.execute("""
             INSERT INTO guild_settings (guild_id, game_key, channel_id)
             VALUES (?, ?, ?)
@@ -103,7 +103,7 @@ async def set_channel(guild_id: int, game_key: str, channel_id: int | None):
 
 async def get_all_settings(guild_id: int) -> dict:
     """Returns dict of game_key -> {enabled, channel_id}"""
-    async with await get_db() as db:
+    async with get_db() as db:
         rows = await db.execute_fetchall(
             "SELECT game_key, enabled, channel_id FROM guild_settings WHERE guild_id=?",
             (guild_id,)

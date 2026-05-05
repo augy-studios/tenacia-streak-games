@@ -25,7 +25,7 @@ class Social(commands.Cog):
 
     async def record_hype_vote(self, guild_id: int, user_id: int, ts: float):
         """Called by longgame cog when a vote is cast."""
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT vote_timestamps, total_votes FROM hype_keeper WHERE guild_id=? AND user_id=?",
                 (guild_id, user_id)
@@ -56,7 +56,7 @@ class Social(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "hype_keeper"):
             return await interaction.response.send_message(embed=not_enabled_embed("Hype Keeper"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, vote_timestamps, total_votes FROM hype_keeper WHERE guild_id=?", (gid,)
             )
@@ -84,7 +84,7 @@ class Social(commands.Cog):
     # ────────────────────────────────────────────────────────────────
 
     async def record_loyal_opposition(self, guild_id: int, user_id: int, round_id: int, is_contrarian: bool):
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM loyal_opposition WHERE guild_id=? AND user_id=?", (guild_id, user_id)
             )
@@ -109,7 +109,7 @@ class Social(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "loyal_opposition"):
             return await interaction.response.send_message(embed=not_enabled_embed("Loyal Opposition"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 """SELECT user_id, contrarian_count, rounds_participated
                    FROM loyal_opposition WHERE guild_id=? AND rounds_participated >= 3
@@ -141,7 +141,7 @@ class Social(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "streak_breaker"):
             return await interaction.response.send_message(embed=not_enabled_embed("Streak Breaker"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 """SELECT user_id, broken_streak, broken_at FROM streak_breaker
                    WHERE guild_id=? ORDER BY broken_streak DESC LIMIT 10""",

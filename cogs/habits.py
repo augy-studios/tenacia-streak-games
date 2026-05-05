@@ -66,7 +66,7 @@ class Habits(commands.Cog):
         prompt_text = await fetch_prompt()
         now = now_ts()
 
-        async with await get_db() as db:
+        async with get_db() as db:
             cursor = await db.execute(
                 "INSERT INTO daily_prompts (guild_id, prompt_text, posted_at) VALUES (?,?,?)",
                 (gid, prompt_text, now)
@@ -89,7 +89,7 @@ class Habits(commands.Cog):
         )
         msg = await channel.send(embed=embed)
 
-        async with await get_db() as db:
+        async with get_db() as db:
             await db.execute("UPDATE daily_prompts SET message_id=? WHERE id=?", (msg.id, prompt_id))
             await db.commit()
 
@@ -106,7 +106,7 @@ class Habits(commands.Cog):
         now = now_ts()
         cutoff = now - 86400  # last 24 hours
 
-        async with await get_db() as db:
+        async with get_db() as db:
             prompts = await db.execute_fetchall(
                 "SELECT id FROM daily_prompts WHERE guild_id=? AND posted_at>=? ORDER BY posted_at DESC LIMIT 1",
                 (gid, cutoff)
@@ -150,7 +150,7 @@ class Habits(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "daily_prompt"):
             return await interaction.response.send_message(embed=not_enabled_embed("Daily Prompt Responder"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 """SELECT user_id, COUNT(*) as cnt FROM prompt_responses
                    WHERE guild_id=? GROUP BY user_id ORDER BY cnt DESC LIMIT 10""",
@@ -173,7 +173,7 @@ class Habits(commands.Cog):
 
     async def record_submission(self, guild_id: int, user_id: int, round_id: int):
         """Called when a member submits to a creative round."""
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM submission_soldier WHERE guild_id=? AND user_id=?",
                 (guild_id, user_id)
@@ -208,7 +208,7 @@ class Habits(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "submission_soldier"):
             return await interaction.response.send_message(embed=not_enabled_embed("Submission Soldier"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, current_streak, best_streak FROM submission_soldier WHERE guild_id=? ORDER BY current_streak DESC LIMIT 10",
                 (gid,)
@@ -229,7 +229,7 @@ class Habits(commands.Cog):
     vigilance = app_commands.Group(name="vigilance", description="Voter Vigilance commands.")
 
     async def record_vote_vigilance(self, guild_id: int, user_id: int, round_id: int):
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT * FROM voter_vigilance WHERE guild_id=? AND user_id=?",
                 (guild_id, user_id)
@@ -253,7 +253,7 @@ class Habits(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "voter_vigilance"):
             return await interaction.response.send_message(embed=not_enabled_embed("Voter Vigilance"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, voting_windows FROM voter_vigilance WHERE guild_id=? ORDER BY voting_windows DESC LIMIT 10",
                 (gid,)
@@ -275,7 +275,7 @@ class Habits(commands.Cog):
 
     async def check_completionist(self, guild_id: int, user_id: int, round_id: int):
         """Check if user both submitted and voted in this round; award if so."""
-        async with await get_db() as db:
+        async with get_db() as db:
             submitted = await db.execute_fetchall(
                 "SELECT 1 FROM round_submissions WHERE guild_id=? AND user_id=? AND round_id=?",
                 (guild_id, user_id, round_id)
@@ -309,7 +309,7 @@ class Habits(commands.Cog):
         gid = interaction.guild_id
         if not await is_enabled(gid, "completionist"):
             return await interaction.response.send_message(embed=not_enabled_embed("The Completionist"), ephemeral=True)
-        async with await get_db() as db:
+        async with get_db() as db:
             rows = await db.execute_fetchall(
                 "SELECT user_id, achievements FROM completionist WHERE guild_id=? ORDER BY achievements DESC LIMIT 10",
                 (gid,)
